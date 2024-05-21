@@ -1,6 +1,7 @@
 package com.example.spring.authorizationserver.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -13,11 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+@Configuration
 @EnableWebSecurity
 public class DefaultSecurityConfig {
     // @formatter:off
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests.anyRequest().authenticated()
@@ -29,7 +31,7 @@ public class DefaultSecurityConfig {
 
     // @formatter:off
     @Bean
-    UserDetailsService users() {
+    public UserDetailsService users() {
         UserDetails user = User.withUsername("bwayne").passwordEncoder(s -> passwordEncoder().encode(s))
                 .password("wayne")
                 .roles("USER")
@@ -40,7 +42,7 @@ public class DefaultSecurityConfig {
 
     // @formatter:off
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
     // @formatter:on

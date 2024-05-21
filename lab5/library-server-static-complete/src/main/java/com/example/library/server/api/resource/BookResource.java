@@ -4,8 +4,8 @@ import com.example.library.server.api.resource.assembler.UserResourceAssembler;
 import com.example.library.server.dataaccess.Book;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -40,7 +40,8 @@ class BookApiEnd2EndTest {
           .withRealmImportFile("keycloak_realm_workshop.json")
           .withEnv("DB_VENDOR", "h2");
 
-  @LocalServerPort private int port;
+  @LocalServerPort
+  private int port;
 
   private String authServerUrl;
 

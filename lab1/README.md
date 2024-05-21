@@ -2,7 +2,7 @@
 
 In this first part we extend an existing Microservice to an OAuth 2.0 and OpenID Connect 1.0 compliant Resource Server.
 
-See [Spring Security 5 Resource Server reference doc](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#oauth2resourceserver) 
+See [Spring Security 6 Resource Server reference doc](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#oauth2resourceserver) 
 for all details on how to build and configure a resource server. 
 
 __Please check out the [complete documentation](../application-architecture) for the sample application before 
@@ -169,23 +169,23 @@ click the refresh toolbar button in the gradle tool window).
 
 #### Configure The Resource Server
 
-Spring security 5 uses the 
+Spring Security 6 uses the 
 [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig) specification 
 to completely configure the resource server to use our keycloak instance.
   
 __Make sure keycloak has been started as described in the [setup section](../setup/README.md).__
 
-Navigate your web browser to the url [localhost:8080/auth/realms/workshop/.well-known/openid-configuration](http://localhost:8080/auth/realms/workshop/.well-known/openid-configuration).  
+Navigate your web browser to the url [localhost:8080/realms/workshop/.well-known/openid-configuration](http://localhost:8080/realms/workshop/.well-known/openid-configuration).  
 Then you should see the public discovery information that keycloak provides 
 (like the following, which only shows partial information).
 
 ```json
 {
-  "issuer": "http://localhost:8080/auth/realms/workshop",
-  "authorization_endpoint": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/auth",
-  "token_endpoint": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token",
-  "userinfo_endpoint": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/userinfo",
-  "jwks_uri": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/certs"
+  "issuer": "http://localhost:8080/realms/workshop",
+  "authorization_endpoint": "http://localhost:8080/realms/workshop/protocol/openid-connect/auth",
+  "token_endpoint": "http://localhost:8080/realms/workshop/protocol/openid-connect/token",
+  "userinfo_endpoint": "http://localhost:8080/realms/workshop/protocol/openid-connect/userinfo",
+  "jwks_uri": "http://localhost:8080/realms/workshop/protocol/openid-connect/certs"
 }  
 ```
 
@@ -193,7 +193,7 @@ For configuring a resource server the important entries are _issuer_ and _jwk-se
 For a resource server only the correct validation of a JWT token is important, so it only needs to know where to load
 the public key from to validate the token signature.
   
-Spring Security 5 automatically configures a resource server by specifying the _jwk-set_ uri value 
+Spring Security 6 automatically configures a resource server by specifying the _jwk-set_ uri value 
 as part of the predefined spring property _spring.security.oauth2.resourceserver.jwt.set-uri_ 
 
 To perform this step, open _application.yml__ and add the jwk set uri property. 
@@ -210,7 +210,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/auth/realms/workshop/protocol/openid-connect/certs
+          jwk-set-uri: http://localhost:8080/realms/workshop/protocol/openid-connect/certs
 ```
 **Hint: An error you get very often with files in yaml format is that the indents are not correct. 
 This can lead to unexpected errors later when you try to run all this stuff.**
@@ -225,8 +225,7 @@ Spring Security then validates by default:
 
 Usually this configuration would be sufficient to configure a resource server (by auto-configuring all settings using spring boot).
 As there is already a security configuration for basic authentication in place (_com.example.library.server.config.WebSecurityConfiguration_), 
-this disables the spring boot auto configuration. Starting with Spring Boot 2 you always have to configure Spring Security 
-yourself as soon as you introduce a class which extends _WebSecurityConfigurerAdapter_.
+this disables the spring boot auto configuration. Starting with Spring Security 5.7, the recommended way to achieve this is a _SecurityFilterChain_.
 
 So we have to change the existing security configuration to enable token based authentication instead of basic authentication.
 We also want to make sure, our resource server is working with stateless token authentication, so we have to configure stateless
@@ -241,7 +240,6 @@ package com.example.library.server.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -255,7 +253,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -297,7 +295,7 @@ This configuration above
 * disables CSRF protection (with stateless sessions, i.e. without session cookies we do not need this anymore) 
   (which also enables us to even make post requests on the command line)
 * protects any request (i.e. requires authentication for any endpoint)
-* enables this application as a resource server with expecting access tokens in JWT format (as of spring security 5.2 you may also
+* enables this application as a resource server with expecting access tokens in JWT format (as of Spring Security 6.2 you may also
 configure this to use opaque tokens instead)
 
 _PasswordEncoder_ is not required anymore as we now stopped storing passwords
@@ -366,7 +364,7 @@ This is how this password grant request looks like:
 httpie:
 
 ```shell
-http --form http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token grant_type=password \
+http --form http://localhost:8080/realms/workshop/protocol/openid-connect/token grant_type=password \
 username=ckent password=kent client_id=library-client client_secret=9584640c-3804-4dcd-997b-93593cfb9ea7
 ``` 
 
@@ -374,7 +372,7 @@ curl:
 
 ```shell
 curl -X POST -d 'grant_type=password&username=ckent&password=kent&client_id=library-client&client_secret=9584640c-3804-4dcd-997b-93593cfb9ea7' \
-http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token
+http://localhost:8080/realms/workshop/protocol/openid-connect/token
 ```
 
 This should return an access token together with a refresh token:
@@ -415,7 +413,7 @@ curl -H 'Authorization: Bearer [access_token]' \
 You have to replace _[access_token]_ with the one you have obtained in previous request.  
 Now the user authenticates by the given token, but even with using the correct user Clark Kent you get a _"403"_ response (_Forbidden_). 
 
-This is due to the fact that Spring Security 5 automatically maps all scopes that are part of the
+This is due to the fact that Spring Security 6 automatically maps all scopes that are part of the
 JWT token to the corresponding authorities.
 
 ![Manual Role Mapping](../docs/images/manual_role_mapping.png)
@@ -600,7 +598,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -616,7 +613,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
   private final LibraryUserDetailsService libraryUserDetailsService;
 
@@ -736,7 +733,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -756,7 +752,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
     private final OAuth2ResourceServerProperties oAuth2ResourceServerProperties;
 
@@ -839,8 +835,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/auth/realms/workshop/protocol/openid-connect/certs
-          issuer-uri: http://localhost:8080/auth/realms/workshop
+          jwk-set-uri: http://localhost:8080/realms/workshop/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/workshop
 ```
 
 Now we can re-start the application and test again the same request we had retrieved an '403' error before.
@@ -851,7 +847,7 @@ First get another fresh access token:
 httpie:
 
 ```shell
-http --form http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token grant_type=password \
+http --form http://localhost:8080/realms/workshop/protocol/openid-connect/token grant_type=password \
 username=ckent password=kent client_id=library-client client_secret=9584640c-3804-4dcd-997b-93593cfb9ea7
 ``` 
 
@@ -859,7 +855,7 @@ curl:
 
 ```shell
 curl -X POST -d 'grant_type=password&username=ckent&password=kent&client_id=library-client&client_secret=9584640c-3804-4dcd-997b-93593cfb9ea7' \
-http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token
+http://localhost:8080/realms/workshop/protocol/openid-connect/token
 ```
 
 This should return an access token together with a refresh token:

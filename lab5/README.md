@@ -63,7 +63,7 @@ So let's start.
 Now, let's start with step 1 of this lab. Here we will have a look into the required changes we need
 compared to the resource server of [Lab 1](../lab1/README.md) to support static public keys for token signature validation.
 
-In [Lab 1](../lab1/README.md) we have seen how Spring security 5 uses the 
+In [Lab 1](../lab1/README.md) we have seen how Spring Security 6 uses the 
 [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig) specification 
 to completely configure the resource server to use our keycloak instance.
 

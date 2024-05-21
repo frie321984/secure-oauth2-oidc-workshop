@@ -8,7 +8,7 @@ the [OAuth2 client credentials grant flow](https://tools.ietf.org/html/rfc6749#s
 
 ![Client Credentials Grant](images/client_credentials.png)
 
-See [Spring Security 5 OAuth 2.0 Client reference doc](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#webclient) 
+See [Spring Security 6 OAuth 2.0 Client reference doc](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#webclient) 
 for all details on how to build and configure a OAuth 2.0 client. 
 
 ## Lab Contents
@@ -129,7 +129,7 @@ import org.springframework.web.reactive.function.client.WebClient;
   @Bean
   ReactiveClientRegistrationRepository clientRegistrations() {
     ClientRegistration clientRegistration = ClientRegistrations
-            .fromOidcIssuerLocation("http://localhost:8080/auth/realms/workshop")
+            .fromOidcIssuerLocation("http://localhost:8080/realms/workshop")
             .registrationId("library_client")
             .clientId("library-client")
             .clientSecret("9584640c-3804-4dcd-997b-93593cfb9ea7")

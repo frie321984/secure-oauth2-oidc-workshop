@@ -1,17 +1,17 @@
 package com.example.authorizationcode.client.config;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * authorization:
- *     endpoint: http://localhost:8080/auth/realms/workshop/protocol/openid-connect/auth
+ *     endpoint: http://localhost:8080/realms/workshop/protocol/openid-connect/auth
  *     clientid: demo-client
  *     response-type: code
  *     redirect-uri: http://localhost:9095/client/callback
@@ -19,12 +19,12 @@ import java.util.List;
  *     pkce: false
  *     prompt: none
  *   token:
- *     endpoint: http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token
+ *     endpoint: http://localhost:8080/realms/workshop/protocol/openid-connect/token
  *     clientid: demo-client
  *     client-secret: b3ec9d3f-d1ee-4a18-b4ba-05d832c15293
  *     redirect-uri: http://localhost:9095/client/callback
  *   introspection:
- *     endpoint: http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token/introspect
+ *     endpoint: http://localhost:8080/realms/workshop/protocol/openid-connect/token/introspect
  */
 @ConfigurationProperties(prefix = "democlient")
 public class AuthCodeDemoProperties {

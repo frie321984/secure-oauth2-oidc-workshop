@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,7 +32,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
     private final OAuth2ResourceServerProperties oAuth2ResourceServerProperties;
 
@@ -45,21 +46,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.libraryUserDetailsService = libraryUserDetailsService;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+    @Bean
+    protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http.sessionManagement(strategy -> strategy.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(withDefaults())
-                .csrf()
-                .disable()
+                .csrf(csrf -> csrf.disable())
                 .authorizeRequests()
                 .anyRequest()
                 .fullyAuthenticated()
                 .and()
-                .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(libraryUserJwtAuthenticationConverter());
+                .oauth2ResourceServer(
+                        oauth2 -> oauth2.jwt(
+                                jwt -> jwt.jwtAuthenticationConverter(libraryUserJwtAuthenticationConverter())));
+        return http.build();
     }
 
     @Bean

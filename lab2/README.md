@@ -4,7 +4,7 @@ In the second lab we want to build an OAuth2/OIDC client for the resource server
 Therefore, you will be provided a complete spring mvc web client application that works
 together with the resource server of [lab 1](../lab1). 
 
-See [Spring Security 5 OAuth 2.0 Client reference doc](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#oauth2client) 
+See [Spring Security 6 OAuth 2.0 Client reference doc](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#oauth2client) 
 for all details on how to build and configure an OAuth 2.0 client. 
 
 __Please check out the [complete documentation](../application-architecture) for the sample application before 
@@ -128,32 +128,32 @@ implementation('org.springframework.boot:spring-boot-starter-oauth2-client')
 
 __Note: Make sure to trigger a gradle update in your Java IDE__
 
-Spring security 5 utilizes the [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig) specification 
+Spring Security 6 utilizes the [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig) specification 
 to completely configure the client to work together with the Keycloak instance.
   
 __Make sure keycloak has been started as described in the [setup section](../setup/README.md).__
 
-Navigate your web browser to the url [localhost:8080/auth/realms/workshop/.well-known/openid-configuration](http://localhost:8080/auth/realms/workshop/.well-known/openid-configuration).  
+Navigate your web browser to the url [localhost:8080/realms/workshop/.well-known/openid-configuration](http://localhost:8080/realms/workshop/.well-known/openid-configuration).  
 Then you should see the public discovery information that keycloak provides 
 (similar to the following snippet, showing only partial information).
 
 ```json
 {
-  "issuer": "http://localhost:8080/auth/realms/workshop",
-  "authorization_endpoint": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/auth",
-  "token_endpoint": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/token",
-  "userinfo_endpoint": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/userinfo",
-  "jwks_uri": "http://localhost:8080/auth/realms/workshop/protocol/openid-connect/certs"
+  "issuer": "http://localhost:8080/realms/workshop",
+  "authorization_endpoint": "http://localhost:8080/realms/workshop/protocol/openid-connect/auth",
+  "token_endpoint": "http://localhost:8080/realms/workshop/protocol/openid-connect/token",
+  "userinfo_endpoint": "http://localhost:8080/realms/workshop/protocol/openid-connect/userinfo",
+  "jwks_uri": "http://localhost:8080/realms/workshop/protocol/openid-connect/certs"
 }  
 ```
 
 For configuring an OAuth2 client the important entries are _issuer_, _authorization_endpoint_, 
 _token_endpoint_, _userinfo_endpoint_ and _jwks_uri_.  
-Spring Security 5 automatically configures an OAuth2 client by just specifying the _issuer_ uri value 
+Spring Security 6 automatically configures an OAuth2 client by just specifying the _issuer_ uri value 
 as part of the predefined spring property _spring.security.oauth2.client.provider.[id].issuer-uri_.
 
 For OAuth2 clients you have to specify the client registration, which usually consists of `client id`, `client secret`, 
-`authorization grant type`, `redirect uri` to your client callback and optionally the `scope`. With Spring Security 5.2.0 you can use the authorization code grant with PKCE. This is the recommend grant type for this kind of application meanwhile. (see https://tools.ietf.org/html/draft-ietf-oauth-security-topics-13#section-3.1.1)
+`authorization grant type`, `redirect uri` to your client callback and optionally the `scope`. With Spring Security 6.2.0 you can use the authorization code grant with PKCE. This is the recommend grant type for this kind of application meanwhile. (see https://tools.ietf.org/html/draft-ietf-oauth-security-topics-13#section-3.1.1)
 
 To make use of this grant type, make sure you have a public client and just omit the client secret. If you want to make sure PKCE is being used, you can specify `client-authentication-method` to `none`. (as in the code below)
 
@@ -182,7 +182,7 @@ spring:
             scope: openid
         provider:
           keycloak:
-            issuerUri: http://localhost:8080/auth/realms/workshop
+            issuerUri: http://localhost:8080/realms/workshop
             user-name-attribute: name
 ```
 An error you get very often with files in yaml format is that the indents are not correct. 

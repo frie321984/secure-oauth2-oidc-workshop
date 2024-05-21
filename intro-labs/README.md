@@ -11,5 +11,5 @@ The intro labs contain the following demos:
   that are built upon this flow like the PKCE addition or OpenID Connect.
 * [Connecting a client app to GitHub API using OAuth 2.0](github-client)  
   This demo shows how the common predefined OAuth2 clients
-  of spring security 5 can be used to quickly build clients
+  of Spring Security 6 can be used to quickly build clients
   for well known providers like GitHub, Google or Facebook. 

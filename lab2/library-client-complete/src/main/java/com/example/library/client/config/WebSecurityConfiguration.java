@@ -1,13 +1,15 @@
 package com.example.library.client.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,19 +17,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-        .anyRequest()
-        .fullyAuthenticated()
-        .and()
-        .oauth2Client()
-        .and()
-        .oauth2Login()
-        .userInfoEndpoint()
-        .userAuthoritiesMapper(userAuthoritiesMapper());
+            .anyRequest()
+            .fullyAuthenticated()
+            .and()
+            .oauth2Client(Customizer.withDefaults())
+            .oauth2Login(login -> login.userInfoEndpoint(endpoint -> endpoint.userAuthoritiesMapper(userAuthoritiesMapper())));
+    return http.build();
   }
 
   private GrantedAuthoritiesMapper userAuthoritiesMapper() {

@@ -2,6 +2,7 @@ package com.example.library.client.web;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
@@ -44,11 +45,11 @@ public class BooksController {
             s -> s.equals(HttpStatus.UNAUTHORIZED),
             cr -> Mono.just(new BadCredentialsException("Not authenticated")))
         .onStatus(
-            HttpStatus::is4xxClientError,
-            cr -> Mono.just(new IllegalArgumentException(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is4xxClientError,
+            cr -> Mono.just(new IllegalArgumentException(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .onStatus(
-            HttpStatus::is5xxServerError,
-            cr -> Mono.just(new Exception(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is5xxServerError,
+            cr -> Mono.just(new Exception(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .bodyToMono(BookListResource.class)
         .log()
         .map(BookListResource::get_embedded)
@@ -85,11 +86,11 @@ public class BooksController {
             s -> s.equals(HttpStatus.UNAUTHORIZED),
             cr -> Mono.just(new BadCredentialsException("Not authenticated")))
         .onStatus(
-            HttpStatus::is4xxClientError,
-            cr -> Mono.just(new IllegalArgumentException(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is4xxClientError,
+                cr -> Mono.just(new IllegalArgumentException(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .onStatus(
-            HttpStatus::is5xxServerError,
-            cr -> Mono.just(new Exception(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is5xxServerError,
+                cr -> Mono.just(new Exception(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .bodyToMono(BookResource.class)
         .log()
         .block();
@@ -112,11 +113,11 @@ public class BooksController {
             s -> s.equals(HttpStatus.UNAUTHORIZED),
             cr -> Mono.just(new BadCredentialsException("Not authenticated")))
         .onStatus(
-            HttpStatus::is4xxClientError,
-            cr -> Mono.just(new IllegalArgumentException(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is4xxClientError,
+            cr -> Mono.just(new IllegalArgumentException(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .onStatus(
-            HttpStatus::is5xxServerError,
-            cr -> Mono.just(new Exception(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is5xxServerError,
+            cr -> Mono.just(new Exception(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .bodyToMono(BookResource.class)
         .log()
         .block();
@@ -139,11 +140,11 @@ public class BooksController {
             s -> s.equals(HttpStatus.UNAUTHORIZED),
             cr -> Mono.just(new BadCredentialsException("Not authenticated")))
         .onStatus(
-            HttpStatus::is4xxClientError,
-            cr -> Mono.just(new IllegalArgumentException(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is4xxClientError,
+            cr -> Mono.just(new IllegalArgumentException(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .onStatus(
-            HttpStatus::is5xxServerError,
-            cr -> Mono.just(new Exception(cr.statusCode().getReasonPhrase())))
+            HttpStatusCode::is5xxServerError,
+            cr -> Mono.just(new Exception(HttpStatus.valueOf(cr.statusCode().value()).getReasonPhrase())))
         .bodyToMono(BookResource.class)
         .log()
         .block();

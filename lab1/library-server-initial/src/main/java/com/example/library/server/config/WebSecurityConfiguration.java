@@ -2,12 +2,13 @@ package com.example.library.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -20,11 +21,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.cors(withDefaults()).csrf().disable().httpBasic().and().authorizeRequests().anyRequest().fullyAuthenticated();
+  @Bean
+  protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    http.cors(withDefaults()).csrf(csrf -> csrf.disable()).httpBasic(Customizer.withDefaults()).authorizeRequests().anyRequest().fullyAuthenticated();
+    return http.build();
   }
 
   @Bean

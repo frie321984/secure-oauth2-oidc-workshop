@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* [Java SDK](https://adoptopenjdk.net) Version 11 or 14
+* [Java SDK](https://adoptopenjdk.net) Version 17 or 21 (not tested with later versions)
 * A Java IDE like
   * [Eclipse](https://www.eclipse.org/downloads)
   * [Spring Toolsuite](https://spring.io/tools)
@@ -97,7 +97,7 @@ If you see errors importing the workshop configuration then please re-check the 
 
 To set up [Keycloak](https://keycloak.org): 
 
-1. Download the [Standard Server Distribution of Keycloak (Version 12.0.4 or later)](https://www.keycloak.org/downloads-archive.html).
+1. Download the [Standard Server Distribution of Keycloak (Version 24.0.4 or later)](https://www.keycloak.org/downloads-archive.html).
 2. Extract the downloaded zip/tar file __keycloak-x.x.x.zip__/__keycloak-x.x.x.tar-gz__ into a new local directory of your choice 
 (this directory will be referenced as __<KEYCLOAK_INSTALL_DIR>__ in next steps)
 
@@ -113,7 +113,7 @@ All you need to configure Keycloak is located in the subdirectory _setup_ of the
    __import_keycloak_realm.sh__ or __import_keycloak_realm.bat__ (depending on your OS). 
    This starts a standalone Keycloak instance and automatically imports the required configuration.
 4. Wait until the import has finished (look for a line like _Started 590 of 885 services_) then 
-   direct your web browser to [localhost:8080/auth](http://localhost:8080/auth/)
+   direct your web browser to [localhost:8080/](http://localhost:8080/)
 5. Here you have to create the initial admin user to get started. Please use the value _admin_ both as username and as password, 
 then click the button _Create_. Please note: In production you must use a much more secure password for the admin user!
 6. Now you can continue to the _Administration Console_ by clicking on the corresponding link displayed and login using the new credentials
@@ -140,12 +140,12 @@ This can be done like this (e.g. for remapping port to 8090 instead of 8080):
 
 On Linux/macOS:
 ```
-./standalone.sh -Djboss.socket.binding.port-offset=10
+./standalone.sh --http-port=9091
 ```
 
 On Windows:
 ```
-./standalone.bat -Djboss.socket.binding.port-offset=10
+./standalone.bat --http-port=9091
 ```
 
 Note: Take into account that for all URL's pointing to Keycloak in the hands-on steps you always have to use the remapped port
@@ -156,7 +156,7 @@ instead of default one (8080) as well.
 Independent of the setup type (docker or local install), to access the web admin UI of Keycloak 
 you need to perform these steps:
 
-1. Now direct your browser to [localhost:8080/auth/admin](http://localhost:8080/auth/admin/)
+1. Now direct your browser to [localhost:8080/admin/master/console/](http://localhost:8080/admin/master/console/)
 2. Login into the admin console using __admin/admin__ as credentials
 
 Now, if you see the realm _workshop_ on the left then Keycloak is ready to use it for this workshop.

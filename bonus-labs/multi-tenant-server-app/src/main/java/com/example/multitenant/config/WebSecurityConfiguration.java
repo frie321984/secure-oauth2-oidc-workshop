@@ -1,27 +1,28 @@
 package com.example.multitenant.config;
 
 import com.nimbusds.jwt.JWTParser;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.authentication.JwtBearerTokenAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
+import org.springframework.security.web.SecurityFilterChain;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
   private final BearerTokenResolver bearerTokenResolver = new DefaultBearerTokenResolver();
   private final String auth0JwkSetUri;
@@ -34,11 +35,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     this.oktaJwkSetUri = oktaJwkSetUri;
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
     http.authorizeRequests(ar -> ar.anyRequest().authenticated())
-        .oauth2ResourceServer()
-        .authenticationManagerResolver(multiTenantAuthenticationManager());
+            .oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(multiTenantAuthenticationManager()));
+    return http.build();
   }
 
   @Bean

@@ -1,6 +1,6 @@
 {
-  "realm" : "workyshop",
-  "displayName" : "Workyshop",
+  "realm" : "workshop",
+  "displayName" : "Workshop",
   "notBefore" : 1571836504,
   "revokeRefreshToken" : true,
   "refreshTokenMaxReuse" : 1,
